@@ -10,12 +10,7 @@ class App extends React.Component {
   constructor() {
     super();
     this.state = {
-      contacts: [
-        { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-        { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-        { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-        { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-      ],
+      contacts: [],
       filter: '',
     };
 
@@ -39,7 +34,7 @@ class App extends React.Component {
     if (match) {
       return match[1] + '-' + match[2] + '-' + match[3];
     }
-    return null;
+    return number;
   };
 
   handleSubmit = event => {
@@ -56,14 +51,25 @@ class App extends React.Component {
         number: this.formatPhoneNumber(this.state.number),
       };
       this.setState({ contacts: [...this.state.contacts, newContact] });
+      localStorage.setItem(
+        'contacts',
+        JSON.stringify([...this.state.contacts, newContact])
+      );
+
+      this.setState({ contacts: [...this.state.contacts, newContact] });
     }
   };
 
   filterList = () => {
     const filter = this.state.filter.toLowerCase();
-    const filteredList = this.state.contacts.filter(contact =>
+
+    const localStorageContacts =
+      JSON.parse(localStorage.getItem('contacts')) || [];
+
+    const filteredList = localStorageContacts.filter(contact =>
       contact.name.toLowerCase().includes(filter)
     );
+
     return filteredList;
   };
 
@@ -72,6 +78,13 @@ class App extends React.Component {
       ...prevState,
       contacts: prevState.contacts.filter(contact => contact.id !== id),
     }));
+
+    const localStorageContacts =
+      JSON.parse(localStorage.getItem('contacts')) || [];
+    const updatedContacts = localStorageContacts.filter(
+      contact => contact.id !== id
+    );
+    localStorage.setItem('contacts', JSON.stringify(updatedContacts));
   };
 
   render() {
