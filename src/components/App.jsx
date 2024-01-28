@@ -18,6 +18,13 @@ class App extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
+  componentDidMount() {
+    const localStorageContacts =
+      JSON.parse(localStorage.getItem('contacts')) || [];
+
+    this.setState({ contacts: localStorageContacts });
+  }
+
   handleChange = event => {
     const target = event.target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
@@ -63,10 +70,7 @@ class App extends React.Component {
   filterList = () => {
     const filter = this.state.filter.toLowerCase();
 
-    const localStorageContacts =
-      JSON.parse(localStorage.getItem('contacts')) || [];
-
-    const filteredList = localStorageContacts.filter(contact =>
+    const filteredList = this.state.contacts.filter(contact =>
       contact.name.toLowerCase().includes(filter)
     );
 
@@ -79,9 +83,7 @@ class App extends React.Component {
       contacts: prevState.contacts.filter(contact => contact.id !== id),
     }));
 
-    const localStorageContacts =
-      JSON.parse(localStorage.getItem('contacts')) || [];
-    const updatedContacts = localStorageContacts.filter(
+    const updatedContacts = this.state.contacts.filter(
       contact => contact.id !== id
     );
     localStorage.setItem('contacts', JSON.stringify(updatedContacts));
